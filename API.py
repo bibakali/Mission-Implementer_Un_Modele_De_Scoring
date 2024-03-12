@@ -135,5 +135,5 @@ def predict():
 app.add_url_rule ('/scores', 'scores', predict)
 if __name__ == "__main__":
     #os.environ.pop("FLASK_RUN_FROM_CLI")
-    app.run(debug=False, host = 'localhost', port = 5007, use_reloader=False)
+    app.run(debug=False, port = 5007, use_reloader=False)
     #(host='10.0.5.178', port=6000, debug = True)
