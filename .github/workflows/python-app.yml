@@ -26,10 +26,16 @@ jobs:
       - name: Install ngrok
         run: |
           python -m pip install ngrok
+          
+      - name: Get ngrok path
+        id: ngrok_path
+        run: |
+          echo "::set-output name=ngrok_path::$(which ngrok)"
 
       - name: Set up ngrok authtoken
         run: |
          ./ngrok authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
+        working-directory:  echo "::set-output name=ngrok_path::$(which ngrok)"
 
       - name: Run Streamlit Application
         id: streamlit
