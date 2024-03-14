@@ -40,8 +40,13 @@ jobs:
         run: |
           export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           streamlit run Test_API.py &>/dev/null &
-          get_ipython().system_raw('/usr/local/bin/ngrok http 8501 &')
-
-      - name: Display Ngrok URL
+          /usr/local/bin/ngrok http 8501 &
+          
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Get Ngrok URL
+        id: ngrok_url
         run: |
-          echo "Ngrok URL: ${{ steps.streamlit.outputs.ngrok_url }}"
+          sleep 10  # Attendez un moment pour que ngrok démarre
+          ngrok_url=$(curl -sS http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          echo "::set-output name=ngrok_url::$ngrok_url"
