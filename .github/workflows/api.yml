@@ -40,7 +40,7 @@ jobs:
         run: |
           export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           python3 API.py &>/dev/null &
-          /usr/local/bin/ngrok http 8501 &
+          /usr/local/bin/ngrok http 8500 &
           
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
