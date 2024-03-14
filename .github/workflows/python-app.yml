@@ -22,19 +22,20 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Install ngrok 
         run: |
-          python -m pip install ngrok
-        shell: bash
+          wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip ngrok-stable-linux-amd64.zip
+
       - name: Get ngrok path
         id: ngrok_path
         run: |
           echo "::set-output name=ngrok_path::$(which ngrok)"
-        shell: bash
-      - name: configure authtoken
+
+      - name: Configure authtoken
         run: |
-            ${{ steps.ngrok_path.outputs.ngrok_path }} authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
-        shell: bash
+          ${{ steps.ngrok_path.outputs.ngrok_path }} authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
 
       - name: Run Streamlit Application
         id: streamlit
@@ -42,9 +43,7 @@ jobs:
           export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           streamlit run Test_API.py &>/dev/null &
           ${{ steps.ngrok_path.outputs.ngrok_path }} http 8501 &
-        shell: bash
 
       - name: Display Ngrok URL
         run: |
           echo "Ngrok URL: ${{ steps.streamlit.outputs.ngrok_url }}"
-        shell: bash
