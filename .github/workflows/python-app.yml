@@ -28,6 +28,10 @@ jobs:
           wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
           unzip ngrok-stable-linux-amd64.zip
 
+      - name: Set up ngrok authtoken
+        run: |
+         ./ngrok authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
+
       - name: Run Streamlit Application
         id: streamlit
         run: |
