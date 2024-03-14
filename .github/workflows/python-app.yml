@@ -34,7 +34,7 @@ jobs:
           echo "name=ngrok_path::$(which ngrok)"
       - name: Configure authtoken
         run: |
-          ${{ steps.ngrok_path.outputs.ngrok_path }} authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
+          ./ngrok authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
 
       - name: Run Streamlit Application
         id: streamlit
