@@ -40,7 +40,7 @@ jobs:
         run: |
           export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           streamlit run Test_API.py &>/dev/null &
-          /usr/local/bin/ngrok http 8501 &
+          get_ipython().system_raw('/usr/local/bin/ngrok http 8501 &')
 
       - name: Display Ngrok URL
         run: |
