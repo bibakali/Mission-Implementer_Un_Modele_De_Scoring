@@ -34,16 +34,16 @@ jobs:
 
       - name: Set up ngrok authtoken
         run: |
-         ./ngrok authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
-        working-directory:  echo "::set-output name=ngrok_path::$(which ngrok)"
+          ${{ steps.ngrok_path.outputs.ngrok_path }} authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
+        shell: ${{ runner.os }}
 
       - name: Run Streamlit Application
         id: streamlit
         run: |
           export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           streamlit run Test_API.py &>/dev/null &
-          ./ngrok http 8501
-        shell: bash
+          ${{ steps.ngrok_path.outputs.ngrok_path }} http 8501 &
+        shell: ${{ runner.os }}
 
       - name: Display Ngrok URL
         run: |
