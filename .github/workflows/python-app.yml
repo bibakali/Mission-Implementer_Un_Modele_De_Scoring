@@ -33,7 +33,7 @@ jobs:
         shell: bash
       - name: configure authtoken
         run: |
-            ${{ steps.ngrok_path.outputs.ngrok_path }} authtoken ${{ 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern }}
+            ${{ steps.ngrok_path.outputs.ngrok_path }} authtoken 2dBbc8PBv0veCewDRjxg5HDxwjK_yTWc1vHk63PxkyLZyern
         shell: bash
 
       - name: Run Streamlit Application
