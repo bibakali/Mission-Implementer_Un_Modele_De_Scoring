@@ -27,6 +27,8 @@ jobs:
         run: |
           wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
           unzip ngrok-stable-linux-amd64.zip
+          sudo mv ngrok /home/runner/.ngrok2/  # Move ngrok binary to a directory in the PATH
+          ngrok update  # Update ngrok to the latest version
 
       - name: Get ngrok path
         id: ngrok_path
