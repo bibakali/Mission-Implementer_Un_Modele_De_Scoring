@@ -41,7 +41,7 @@ jobs:
         run: |
           export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           streamlit run Test_API.py &>/dev/null &
-          ${{ steps.ngrok_path.outputs.ngrok_path }} http 8501 &
+          ./ngrok http 8501 &
 
       - name: Display Ngrok URL
         run: |
