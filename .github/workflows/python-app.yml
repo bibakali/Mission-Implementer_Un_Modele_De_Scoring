@@ -50,4 +50,3 @@ jobs:
           sleep 10  # Attendez un moment pour que ngrok démarre
           ngrok_url=$(curl -sS http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[0].public_url')
           echo "name=ngrok_url::$ngrok_url"
-          sleep infinity  # Reste en attente indéfiniment le temps que je teste l'url
