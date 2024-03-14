@@ -221,8 +221,7 @@ if client_pred_score:
     ####https://bbkalilunix.pythonanywhere.com/scores
     url_api_model_result = 'https://bbkalilunix.pythonanywhere.com/scores'
     ### Faites attention aux paramètres, avec doit avoir un dict avec la valeur de prêt d'index / ID. C'est ainsi qu'il est implémenté dans notre API ###
-    get_request = requests.get(url=url_api_model_result, params={'index': selected_credit}, , headers={
-"User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
+    get_request = requests.get(url=url_api_model_result, params={'index': selected_credit},headers={"User-Agent" : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
 })
     if get_request.status_code == 200:
         data = get_request.json()
