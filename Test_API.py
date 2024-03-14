@@ -16,18 +16,18 @@ from lightgbm import LGBMClassifier
 import json
 
 # Chargement du meilleur modèle
-path_to_best_model = 'https://github.com/bibakali/Implementer_Un_Modele_De_Scoring/main/best_model.pickle'
+path_to_best_model = 'best_model.pickle'
 with open(path_to_best_model, 'rb') as df_best_model:
     model = pd.read_pickle(df_best_model)
 
 # Chargement du test
-path_to_test = 'https://github.com/bibakali/Implementer_Un_Modele_De_Scoring/main/test_set.pickle'
+path_to_test = 'test_set.pickle'
 with open(path_to_test, 'rb') as df_test_appl1:
     test = pd.read_pickle(df_test_appl1)
 
 
 # Chargement de toutes les informations du client
-path_to_test_clean = 'https://github.com/bibakali/Implementer_Un_Modele_De_Scoring/main/application_test_clean.pickle'
+path_to_test_clean = 'application_test_clean.pickle'
 with open(path_to_test_clean, 'rb') as df_test_appl2:
     df_test_clean = pd.read_pickle(df_test_appl2)
 
