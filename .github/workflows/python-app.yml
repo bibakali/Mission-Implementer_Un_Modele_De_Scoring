@@ -27,8 +27,8 @@ jobs:
         run: |
           streamlit run Test_API.py  # Exécutez votre application Streamlit pendant les tests
 
-      - name: Deploy to PythonAnywhere
+      #- name: Deploy to PythonAnywhere
         #uses: bbkalilunix/ssh-deploy@v2
-        with:
-          local_path: /home/bbkalilunix/Test_API/
-          remote_path: /var/www/creditscore-bbkalilunix_pythonanywhere_com_wsgi.py  # Spécifiez le chemin distant où votre application doit être déployée
+       # with:
+        #  local_path: /home/bbkalilunix/Test_API/
+         # remote_path: /var/www/creditscore-bbkalilunix_pythonanywhere_com_wsgi.py  # Spécifiez le chemin distant où votre application doit être déployée
