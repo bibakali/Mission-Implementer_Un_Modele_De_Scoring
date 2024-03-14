@@ -1,6 +1,5 @@
 name: Deployment Pipeline
 
-
 on:
   push:
     branches:
@@ -24,9 +23,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: Test Streamlit Application
+      - name: Run Streamlit Application
+        id: streamlit
         run: |
           export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-          streamlit run Test_API.py  # Exécutez votre application Streamlit pendant les tests
+          streamlit run Test_API.py &>/dev/null &
+          ngrok_proc=$(ngrok http 8501)
+          ngrok_url=$(echo "$ngrok_proc" | grep -Eo "https://.*\.ngrok\.io")
+          echo "::set-output name=ngrok_url::$ngrok_url"
+        shell: bash
 
-  
+      - name: Display Ngrok URL
+        run: |
+          echo "Ngrok URL: ${{ steps.streamlit.outputs.ngrok_url }}"
