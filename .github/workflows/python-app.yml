@@ -23,14 +23,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
+      - name: Install ngrok
+        run: |
+          wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip ngrok-stable-linux-amd64.zip
+
       - name: Run Streamlit Application
         id: streamlit
         run: |
           export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
           streamlit run Test_API.py &>/dev/null &
-          ngrok_proc=$(ngrok http 8501)
-          ngrok_url=$(echo "$ngrok_proc" | grep -Eo "https://.*\.ngrok\.io")
-          echo "::set-output name=ngrok_url::$ngrok_url"
+          ./ngrok http 8501
         shell: bash
 
       - name: Display Ngrok URL
