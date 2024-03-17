@@ -223,7 +223,7 @@ if client_pred_score:
     st.write('### Décision sur la demande de prêt')
     ###  attention l'url de l'API doit être changée pour le déploiement en série !!###
     ####https://bbkalilunix.pythonanywhere.com/scores
-    url_api_model_result = 'http://localhost:5007/scores'
+    url_api_model_result = 'https://bbkalilunix.pythonanywhere.com/scores'
     ### Faites attention aux paramètres, avec doit avoir un dict avec la valeur de prêt d'index / ID. C'est ainsi qu'il est implémenté dans notre API ###
     get_request = requests.get(url=url_api_model_result, params={'index': selected_credit})
     if get_request.status_code == 200:
