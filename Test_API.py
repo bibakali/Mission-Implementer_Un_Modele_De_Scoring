@@ -54,6 +54,8 @@ ID_de_client = df_test_normalize.index.sort_values()
 
 
 
+
+
 ## importer les images ##
 img1 = Image.open(r'ent.png')
 
@@ -109,6 +111,9 @@ selected_credit = st.sidebar.selectbox('ID de client', ID_de_client)
 client_data = st.sidebar.checkbox('Informations générales')
 client_pred_score = st.sidebar.checkbox('Analyse de la demande de crédit')
 
+### Ajouter checkbox pour afficher l'analyse des données client ###
+client_analysis = st.sidebar.checkbox('Analyse des features de client')
+
 # Chargement des informations générales
 st.sidebar.header("**Informations générales**")
 nb_credits, rev_moy, credits_moy, gender = load_infos_gen(df_test)
@@ -120,7 +125,6 @@ st.sidebar.text(rev_moy)
 # AMT CREDIT
 st.sidebar.markdown("<u>Montant moyen du prêt (USD) :</u>", unsafe_allow_html=True)
 st.sidebar.text(credits_moy)
-
 
 
 ## Afficher input dataframe avec une sélection multiple de fonctionnalités pour toute la liste de passagers disponible (les données ne sont pas mises à l'échelle standard ici !) ##
@@ -219,10 +223,9 @@ if client_pred_score:
     st.write('### Décision sur la demande de prêt')
     ###  attention l'url de l'API doit être changée pour le déploiement en série !!###
     ####https://bbkalilunix.pythonanywhere.com/scores
-    url_api_model_result = 'https://bbkalilunix.pythonanywhere.com/scores'
+    url_api_model_result = 'http://localhost:5007/scores'
     ### Faites attention aux paramètres, avec doit avoir un dict avec la valeur de prêt d'index / ID. C'est ainsi qu'il est implémenté dans notre API ###
-    get_request = requests.get(url=url_api_model_result, params={'index': selected_credit},headers={"User-Agent" : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
-})
+    get_request = requests.get(url=url_api_model_result, params={'index': selected_credit})
     if get_request.status_code == 200:
         data = get_request.json()
         if 'Credit_score' in data:
@@ -288,11 +291,102 @@ if client_pred_score:
             """3) Le score est au dessus de 53% → la demande de prêt est refusée. """)
 
 
+## Afficher la comparaison avec tous les clients et les clients proches dans le score(en utilisant la fonction créée pour filtrer les clients proches / checkbox: 'Analyse des features clients' ) ##
+
+# Continuez avec le reste de votre code
+if client_analysis:
+    # Liste des colonnes à normaliser
+    columns_to_normalize = df_test_normalize.columns.tolist()
+
+    # Créez un objet MinMaxScaler
+    scaler = MinMaxScaler()
+
+    # Normalisez les données
+    df_test_normalize[columns_to_normalize] = scaler.fit_transform(df_test_normalize[columns_to_normalize])
+    st.write('### Analyse des features clients')
+    
+    ### Analyse univariée choisir le type de tracé (boîte à moustaches ou histogramme/barplot)  ###
+    st.write('#### *Analyse univariée*')
+    #### sélectionnez entre les distributions boxplot ou histogramme/barplot pour l'analyse univariée ####
+    selected_anaysis_gh = st.selectbox('Sélectionner un graphique', ['Boxplot'])
+    if selected_anaysis_gh == 'Boxplot':
+        ##### Ajout de la possibilité d'afficher plusieurs entités sur la même parcelle #####
+        selections_analysis = st.multiselect('Vous pouvez ajouter ou enlever une donnée présente dans cette liste:', df_test_normalize[features].columns.tolist(),
+        df_test_normalize[features].columns.tolist()[0:5])
+        ##### afficher la boîte à moustaches #####
+        ###### créer dans chaque df une colonne pour les identifier et utiliser les paramètres de teinte ######
+        df_test_normalize['data_origin'] = 'Tous les clients'
+        
+        ###### concaténer deux df avant de dessiner le boxplot ######
+        cdf = pd.concat([df_test_normalize[selections_analysis + ['data_origin']] ])
+        
+        ###### Créer un DataFrame à partir de la série d'ID de prêt client sélectionnée ######
+        df_loan = pd.DataFrame([df_test_normalize.loc[selected_credit, features].tolist()], columns=features)
+        ###### en utilisant melt mehtod pour adapter notre dataframe concaténé au format que nous voulons (pour afficher plusieurs features) avec Seaborn ######
+        cdf = pd.melt(cdf, id_vars='data_origin', var_name='Features')
+        df_loan = pd.melt(df_loan[selections_analysis], var_name='Features')
+        df_loan['data_origin'] = 'ID_prêt_client_selectionné'
+
+        ###### affichage la figure ######
+        figure_boxplot = plt.figure(figsize=(4,2))
+        ax = sns.boxplot(x = 'Features', y = 'value', hue='data_origin', data=cdf , showfliers=False, palette = 'tab10')
+        sns.stripplot(x = 'Features', y = 'value', data = df_loan, hue = 'data_origin', palette=['yellow'], s=8, linewidth=1.5, edgecolor='black')
+        plt.xticks(fontsize=6, rotation=45)
+        plt.yticks(fontsize=6)
+        plt.ylabel('Valeur normalisée')
+        leg = plt.legend( bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        ###### modifier l'objet de légende pour l'ID de prêt client sélectionné afin qu'il corresponde au style de graphique ######
+        leg.legendHandles[-1].set_linewidth(1.5)
+        leg.legendHandles[-1].set_edgecolor('black')
+       
+        fig = px.box(cdf, x = 'Features', y = 'value', points = False)
+        fig.update_traces(quartilemethod="linear", jitter=0, col=1)
+        
+        st.plotly_chart(fig)
+        st.pyplot(figure_boxplot, clear_figure=True)
 
 
+        ###### ajouter un extenseur pour plus d'explications sur le nuage de points ######
+        with st.expander('Informations complémentaires'):
+            st.write(""" Ce boxplot permet d'afficher les distributions des groupes de clients en fonction de la valeur du client sélectionné.  \n"""
+            """ Notez que les variables sont normalisées afin d'avoir une image de la situation de notre client par rapport aux autres groupes de clients.""")
+    
+    st.write('#### *Analyse bivariée*')
+    # Relation Âge / Revenu Total Graphique interactif 
+    data_sk = df_test.reset_index(drop=False)
+    data_sk.DAYS_BIRTH = (abs(data_sk['DAYS_BIRTH']) / 365).round(1)
+    fig, ax = plt.subplots(figsize=(10, 10))
+    fig = px.scatter(data_sk, x='DAYS_BIRTH', y="AMT_INCOME_TOTAL",
+                         size="AMT_INCOME_TOTAL", color='CODE_GENDER',
+                         hover_data=['CNT_CHILDREN', 'SK_ID_CURR'])
 
 
+    fig.update_layout({'plot_bgcolor': '#f0f0f0'},
+                          title={'text': "Relation Âge / Revenu Total", 'x': 0.5, 'xanchor': 'center'},
+                          title_font=dict(size=20, family='Verdana'), legend=dict(y=1.1, orientation='h'))
+
+    fig.update_traces(marker=dict(line=dict(width=0.5, color='#3a352a')), selector=dict(mode='markers'))
+    fig.update_xaxes(showline=True, linewidth=2, linecolor='#f0f0f0', gridcolor='#cbcbcb',
+                         title="Age", title_font=dict(size=18, family='Verdana'))
+    fig.update_yaxes(showline=True, linewidth=2, linecolor='#f0f0f0', gridcolor='#cbcbcb',
+                         title="Income Total", title_font=dict(size=18, family='Verdana'))
+
+    st.plotly_chart(fig)
 
 
+    st.write("#### *Caractéristiques importantes globales et locales avec SHAP*")
+        
+    
+    # Utilisation de shap pour obtenir les valeurs SHAP
+    explainer = shap.Explainer(model, df_test_normalize[features])
+    shap_values = explainer.shap_values(df_test_normalize[features])
+
+    shap.summary_plot(shap_values, df_test_normalize[features], show=False)
 
 
+   # Enregistrer le graphique comme fichier image
+    plt.savefig('shap_summary_plot.png')
+    plt.close()
+    
+    # Afficher le graphique SHAP dans Streamlit
+    st.image('shap_summary_plot.png')
