@@ -11,6 +11,7 @@ import pickle
 import sklearn
 from sklearn.preprocessing import MinMaxScaler
 from PIL import Image
+import shap
 # Model
 import lightgbm as lgb
 from lightgbm import LGBMClassifier
