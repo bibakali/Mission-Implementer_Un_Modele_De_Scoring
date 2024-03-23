@@ -9,6 +9,7 @@ import seaborn as sns
 import requests
 import pickle
 import sklearn
+from sklearn.preprocessing import MinMaxScaler
 from PIL import Image
 # Model
 import lightgbm as lgb
